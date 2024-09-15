@@ -1,0 +1,9 @@
+
+.navbar {
+    background-color: #007bff !important; /* Color de fondo azul */
+}
+
+.nav-item .nav-link.active {
+    background-color: #013f81 !important; /* Color de fondo azul oscuro para el enlace activo */
+    color: white !important; /* Color de texto blanco para el enlace activo */
+}
