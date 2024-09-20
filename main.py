@@ -20,3 +20,4 @@ def reportes():
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True)
+    print('Servidor corriendo en http://localhost:5000/')
