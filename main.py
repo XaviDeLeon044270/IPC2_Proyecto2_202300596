@@ -1,23 +1,32 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)
+class MyApp:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self.setup_routes()
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+    def setup_routes(self):
+        self.app.add_url_rule('/', 'home', self.home)
+        self.app.add_url_rule('/archivo', 'archivo', self.archivo)
+        self.app.add_url_rule('/info', 'info', self.info)
+        self.app.add_url_rule('/reportes', 'reportes', self.reportes)
 
-@app.route('/archivo')
-def archivo():
-    return render_template('archivo.html')
+    def home(self):
+        return render_template('index.html')
 
-@app.route('/ayuda')
-def ayuda():
-    return render_template('ayuda.html')
+    def archivo(self):
+        return render_template('archivo.html')
 
-@app.route('/reportes')
-def reportes():
-    return render_template('reportes.html')
+    def info(self):
+        return render_template('info.html')
+
+    def reportes(self):
+        return render_template('reportes.html')
+
+    def run(self):
+        self.app.run(host='localhost', debug=True)
+        print('Servidor corriendo en http://localhost:5000/')
 
 if __name__ == '__main__':
-    app.run(host='localhost', debug=True)
-    print('Servidor corriendo en http://localhost:5000/')
+    app = MyApp()
+    app.run()

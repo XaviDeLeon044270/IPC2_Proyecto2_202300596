@@ -1,9 +1,44 @@
-
 .navbar {
-    background-color: #007bff !important; /* Color de fondo azul */
+    background-color: #023e7e !important; /* Color de fondo azul */
 }
 
 .nav-item .nav-link.active {
     background-color: #013f81 !important; /* Color de fondo azul oscuro para el enlace activo */
     color: white !important; /* Color de texto blanco para el enlace activo */
+}
+
+.nav-link, .navbar-brand {
+    color: white !important; /* Color de texto blanco para todos los enlaces y la etiqueta principal */
+}
+
+body {
+    background: url('/static/images/fondo.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    margin: 0;
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 56px); /* Altura de la ventana menos la altura de la barra de navegación */
+}
+
+.form-container {
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro con 60% de transparencia */
+    color: white; /* Texto blanco */
+    padding: 20px; /* Espacio alrededor del contenido */
+    width: 60%; /* Ancho del 60% del contenedor padre */
+    max-width: 600px; /* Ancho máximo de 600px */
+    height: 60%; /* Altura del 60% del contenedor padre */
+    max-height: 400px; /* Altura máxima de 400px */
+    border-radius: 20px; /* Bordes redondeados */
+    text-align: center; /* Centrar el texto horizontalmente */
+    display: flex; /* Hacer que este contenedor sea un contenedor flex */
+    flex-direction: column; /* Los elementos flexibles se apilan verticalmente */
+    justify-content: center; /* Centrar el contenido verticalmente */
+    align-items: center; /* Centrar el contenido horizontalmente */
 }

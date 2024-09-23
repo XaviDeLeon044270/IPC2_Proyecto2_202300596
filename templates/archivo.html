@@ -4,13 +4,11 @@
     <title>Proyecto 2</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='images/engranajes.png') }}" type="image/png">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">Proyecto 2</a>
+        <a class="navbar-brand" href="/">Digital Intelligence, S. A.</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
@@ -20,14 +18,10 @@
                     <a class="nav-link" href="/reportes">Reportes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="ayuda">Ayuda</a>
+                    <a class="nav-link" href="/info">Info</a>
                 </li>
             </ul>
         </div>
     </nav>
-<!--    <div class="container">
-        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Cargar archivo</button>
-        <input type="file" id="fileInput" style="display: none;">
-    </div>  -->
 </body>
 </html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proyecto 2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/engranajes.png') }}" type="image/png">
+    <style>
+        .navbar {
+            background-color: #023e7e !important; /* Color de fondo azul */
+        }
+
+        .nav-item .nav-link.active {
+            background-color: #013f81 !important; /* Color de fondo azul oscuro para el enlace activo */
+            color: white !important; /* Color de texto blanco para el enlace activo */
+        }
+
+        .nav-link, .navbar-brand {
+            color: white !important; /* Color de texto blanco para todos los enlaces y la etiqueta principal */
+        }
+
+        body {
+            background: url('/static/images/fondo.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            margin: 0;
+        }
+
+        .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 56px);
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 80%;
+            height: 80%;
+            max-height: 600px;
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left-column {
+            text-align: center;
+            margin-right: 80px; 
+            width: 35%;
+        }
+
+        .right-column {
+            text-align: right;
+        }
+
+        .right-column img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="/">Digital Intelligence, S. A.</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/archivo">Archivo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reportes">Reportes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/info">Info</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="center-container">
+        <div class="form-container">
+            <div class="left-column">
+                <h2>Datos del estudiante</h2>
+                <p>Nombre: Xavi Alexander De León Perdomo</p>
+                <p>Carnet: 202300596</p>
+                <h2>Datos del curso</h2>
+                <p>Introducción a la programación y computación 2</p>
+                <p>Segundo semestre 2024</p>
+                <p>Proyecto2</p>
+            </div>
+            <div class="right-column">
+                <img src="{{ url_for('static', filename='images/estudiante.jpg') }}" alt="Estudiante">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
