@@ -85,23 +85,16 @@
     <div class="center-container">
         <div class="form-container">
             <div class="left-column">
-                <form action="/archivo" method="post" enctype="multipart/form-data" onsubmit="showMessage()">
+                <form action="{{url_for('cargar_archivo')}}" method="POST" enctype="multipart/form-data">
                     <h2>Archivo de entrada</h2>
                     <p>Por favor ingrese el archivo de entrada .xml</p>
-                    <input type="file" id="fileInput" name="fileInput" accept=".xml" style="display: none;" onchange="this.form.submit()">
-                    <button type="button" onclick="document.getElementById('fileInput').click();">Seleccionar Archivo...</button>
+                    <input type="file" id="fileInput" name="fileInput" accept=".xml">
+                    <input type="submit" class="" value="Cargar archivo">
                 </form>
+            
             </div>
-            <div class="right-column">
-                <h2>Lista de máquinas</h2>
-                <p id="message"></p>
-            </div>
+           
         </div>
     </div>
-    <script>
-    function showMessage() {
-        document.getElementById('message').textContent = 'Se envió el archivo con éxito.';
-    }
-    </script>
 </body>
 </html>

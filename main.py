@@ -1,44 +1,73 @@
 from flask import Flask, render_template, request
 import os
-from xml.etree import ElementTree
-from werkzeug.utils import secure_filename
+import xml.etree.ElementTree as ET
+from clases import Pila
 
-class MyApp:
-    def __init__(self):
-        self.app = Flask(__name__)
-        self.setup_routes()
+app = Flask(__name__)
 
-    def setup_routes(self):
-        self.app.add_url_rule('/', 'home', self.home)
-        self.app.add_url_rule('/archivo', 'archivo', self.archivo, methods=['GET', 'POST'])
-        self.app.add_url_rule('/info', 'info', self.info)
-        self.app.add_url_rule('/reportes', 'reportes', self.reportes)
+pila_maquinas = Pila()
+pila_productos = Pila()
 
-    def home(self):
-        return render_template('index.html')
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-    def archivo(self):
-        if request.method == 'POST':
-            file = request.files.get('fileInput')
-            if file and file.filename.endswith('.xml'):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join('uploads', filename))
-                return 'Archivo subido con éxito'
-            else:
-                return 'No se seleccionó ningún archivo o el archivo no es válido'
-        else:
-            return render_template('archivo.html')
+@app.route('/archivo')
+def archivo():
+    return render_template('archivo.html')
 
-    def info(self):
-        return render_template('info.html')
+@app.route('/cargar_archivo', methods=['GET', 'POST'])
+def cargar_archivo():
+    if 'fileInput' not in request.files:
+        return "No se encontró el archivo"
 
-    def reportes(self):
-        return render_template('reportes.html')
+    file = request.files['fileInput']
+    if file.filename == '':
+        return "No se seleccionó ningún archivo"
+    
+    if file:
+        global pila_maquinas
+        global pila_productos
+        
+        tree = ET.parse(file)
+        root = tree.getroot()
 
-    def run(self):
-        self.app.run(host='localhost', debug=True)
-        print('Servidor corriendo en http://localhost:5000/')
+        for child in root.findall('Maquina'):
+            nombreMaquina = child.find('NombreMaquina').text
+            produccion = int(child.find('CantidadLineasProduccion').text)
+            componentes = int(child.find('CantidadComponentes').text)
+            tiempo = int(child.find('TiempoEnsamblaje').text)
+            
+            # Insertamos la máquina
+            pila_maquinas.insertMachine(nombreMaquina, produccion, componentes, tiempo)
+
+            # Ahora buscamos los productos dentro de la máquina
+            productos = child.find('ListadoProductos')
+            if productos is not None:
+                for producto in productos.findall('Producto'):
+                    nombreProducto = producto.find('nombre').text
+                    elaboracion = producto.find('elaboracion').text
+
+                    # Insertamos el producto en la lista de productos
+                    pila_productos.insertProduct(nombreProducto, elaboracion)
+
+        # Imprimir para depurar
+        print("Maquinas:")
+        pila_maquinas.printMachine()
+        print("\nProductos:")
+        pila_productos.printProduct()
+
+        return "Archivo cargado con éxito"
+
+    
+@app.route('/info')
+def info():
+    return render_template('info.html')
+
+@app.route('/reportes')
+def reportes():
+    return render_template('reportes.html')
+
 
 if __name__ == '__main__':
-    app = MyApp()
-    app.run()
+    app.run(debug=True)
