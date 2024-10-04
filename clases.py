@@ -25,6 +25,14 @@ class Pila(ABC):
     def insertar(self):
         pass
 
+    def buscar(self, nombre):
+        actual = self.primero
+        while actual is not None:
+            if actual.nombre == nombre:
+                return actual
+            actual = actual.siguiente
+        return None
+
     def getNames(self):
         actual = self.primero
         nombres = ""
@@ -78,9 +86,15 @@ class PilaMaquinas(Pila):
                 print(f"\tElaboración: {producto.elaboracion}")
 
     def getProductos(self, nombre_maquina):
-        nodo_actual = self.primero
-        while nodo_actual is not None:
-            if nodo_actual.nombre == nombre_maquina:
-                return nodo_actual.pila_productos
-            nodo_actual = nodo_actual.siguiente
-        return None
+        # Buscar la máquina con el nombre dado
+        maquina = self.buscar(nombre_maquina)
+        if maquina is None:
+            return PilaProductos()
+
+        # Obtener los nombres de los productos de la máquina
+        nombres_productos = maquina.pila_productos.getNames()
+
+        # Dividir la cadena de nombres de productos en cada coma
+        lista_productos = nombres_productos.split(",")
+
+        return lista_productos

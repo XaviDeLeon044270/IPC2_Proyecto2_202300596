@@ -105,14 +105,14 @@
                             <form method="POST">
                                 <div>
                                     <select name="maquina" onchange="this.form.submit()">
-                                        <option value="">Seleccione una máquina...</option>
+                                        <option value="" {% if not maquina_seleccionada %} selected {% endif %}>Seleccione una máquina...</option>
                                         {% for maquina in maquinas %}
-                                        <option value="{{ maquina }}" {% if maquina == maquina_seleccionada %} selected {% endif %}>{{ maquina }}</option>
+                                            <option value="{{ maquina }}" {% if maquina == maquina_seleccionada %} selected {% endif %}>
+                                                {{ maquina }}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                            </form>
-                            <form method="POST">
                                 <div>
                                     <select name="producto">
                                         <option value="">Seleccione un producto...</option>
