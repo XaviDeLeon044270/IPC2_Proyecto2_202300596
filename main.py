@@ -1,73 +1,86 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 import os
 import xml.etree.ElementTree as ET
-from clases import Pila
+from clases import PilaMaquinas, PilaProductos
 
-app = Flask(__name__)
+class MyApp:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self.app.secret_key = 'alguna clave secreta única y secreta'
+        self.pila_maquinas = PilaMaquinas()
+        self.pila_productos = PilaProductos()
 
-pila_maquinas = Pila()
-pila_productos = Pila()
+        self.app.route('/')(self.home)
+        self.app.route('/archivo', methods=['GET', 'POST'])(self.archivo)
+        self.app.route('/info')(self.info)
+        self.app.route('/reportes')(self.reportes)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+    def home(self):
+        return render_template('index.html')
 
-@app.route('/archivo')
-def archivo():
-    return render_template('archivo.html')
+    def archivo(self):
+        if request.method == 'POST':
+            if 'fileInput' not in request.files:
+                flash("No se encontró el archivo")
+                return redirect(url_for('archivo'))
 
-@app.route('/cargar_archivo', methods=['GET', 'POST'])
-def cargar_archivo():
-    if 'fileInput' not in request.files:
-        return "No se encontró el archivo"
-
-    file = request.files['fileInput']
-    if file.filename == '':
-        return "No se seleccionó ningún archivo"
-    
-    if file:
-        global pila_maquinas
-        global pila_productos
-        
-        tree = ET.parse(file)
-        root = tree.getroot()
-
-        for child in root.findall('Maquina'):
-            nombreMaquina = child.find('NombreMaquina').text
-            produccion = int(child.find('CantidadLineasProduccion').text)
-            componentes = int(child.find('CantidadComponentes').text)
-            tiempo = int(child.find('TiempoEnsamblaje').text)
+            file = request.files['fileInput']
+            if file.filename == '':
+                flash("No se seleccionó ningún archivo")
+                return redirect(url_for('archivo'))
             
-            # Insertamos la máquina
-            pila_maquinas.insertMachine(nombreMaquina, produccion, componentes, tiempo)
+            if file:
+                tree = ET.parse(file)
+                root = tree.getroot()
 
-            # Ahora buscamos los productos dentro de la máquina
-            productos = child.find('ListadoProductos')
-            if productos is not None:
-                for producto in productos.findall('Producto'):
-                    nombreProducto = producto.find('nombre').text
-                    elaboracion = producto.find('elaboracion').text
+                # Limpiamos la pila de máquinas
+                self.pila_maquinas.clear()
 
-                    # Insertamos el producto en la lista de productos
-                    pila_productos.insertProduct(nombreProducto, elaboracion)
+                for child in root.findall('Maquina'):
+                    # Creamos una nueva pila de productos para la nueva máquina
+                    pila_productos = PilaProductos()
 
-        # Imprimir para depurar
-        print("Maquinas:")
-        pila_maquinas.printMachine()
-        print("\nProductos:")
-        pila_productos.printProduct()
+                    nombreMaquina = child.find('NombreMaquina').text
+                    produccion = int(child.find('CantidadLineasProduccion').text)
+                    componentes = int(child.find('CantidadComponentes').text)
+                    tiempo = int(child.find('TiempoEnsamblaje').text)
 
-        return "Archivo cargado con éxito"
+                    # Ahora buscamos los productos dentro de la máquina
+                    productos = child.find('ListadoProductos')
+                    if productos is not None:
+                        for producto in productos.findall('Producto'):
+                            nombreProducto = producto.find('nombre').text
+                            elaboracion = producto.find('elaboracion').text
 
-    
-@app.route('/info')
-def info():
-    return render_template('info.html')
+                            # Insertamos el producto en la pila de productos
+                            pila_productos.insertar(nombreProducto, elaboracion)
 
-@app.route('/reportes')
-def reportes():
-    return render_template('reportes.html')
+                    # Insertamos la máquina en la pila de máquinas
+                    self.pila_maquinas.insertar(nombreMaquina, produccion, componentes, tiempo, pila_productos)
+
+                # Imprimir para depurar
+                print("Maquinas:")
+                self.pila_maquinas.print()
+
+                flash("Archivo cargado con éxito")
+                return redirect(url_for('archivo'))
+        else:
+            # Obtenemos los nombres de las máquinas de la pila
+            maquinas = self.pila_maquinas.getNames().split(",")
+            maquina_seleccionada = request.form.get('maquina')
+            productos = self.pila_maquinas.getProductos(maquina_seleccionada).split(",") if maquina_seleccionada else []
+            return render_template('archivo.html', maquinas=maquinas, productos=productos)
+
+    def info(self):
+        return render_template('info.html')
+
+    def reportes(self):
+        return render_template('reportes.html')
+
+    def run(self):
+        self.app.run(debug=True)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app = MyApp()
+    app.run()

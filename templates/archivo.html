@@ -85,15 +85,50 @@
     <div class="center-container">
         <div class="form-container">
             <div class="left-column">
-                <form action="{{url_for('cargar_archivo')}}" method="POST" enctype="multipart/form-data">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-success">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <form action="{{url_for('archivo')}}" method="POST" enctype="multipart/form-data">
                     <h2>Archivo de entrada</h2>
                     <p>Por favor ingrese el archivo de entrada .xml</p>
-                    <input type="file" id="fileInput" name="fileInput" accept=".xml">
-                    <input type="submit" class="" value="Cargar archivo">
+                    <div style="display: flex; justify-content: space-between;">
+                        <input type="file" id="fileInput" name="fileInput" accept=".xml" style="background-color: #ddd; color: black;">
+                        <input type="submit" class="" value="Subir archivo">
+                    </div>
+                    <div>
+                        <h3>Selecciona una máquina y producto</h3>
+                        <div style="display: flex; justify-content: space-between; gap: 20px;">
+                            <form method="POST">
+                                <div>
+                                    <select name="maquina" onchange="this.form.submit()">
+                                        <option value="">Seleccione una máquina...</option>
+                                        {% for maquina in maquinas %}
+                                        <option value="{{ maquina }}" {% if maquina == maquina_seleccionada %} selected {% endif %}>{{ maquina }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </form>
+                            <form method="POST">
+                                <div>
+                                    <select name="producto">
+                                        <option value="">Seleccione un producto...</option>
+                                        {% for producto in productos %}
+                                        <option value="{{ producto }}">{{ producto }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit">Seleccionar producto</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </form>
-            
-            </div>
-           
+            </div>    
         </div>
     </div>
 </body>
