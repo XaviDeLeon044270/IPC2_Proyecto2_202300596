@@ -4,6 +4,9 @@ class Producto:
         self.elaboracion = elaboracion
         self.siguiente = None
 
+    def __str__(self):
+        return f"Nombre: {self.nombre}, Elaboración: {self.elaboracion}"
+
 class Maquina:
     def __init__(self, nombre, produccion, componentes, tiempo, pila_productos):
         self.nombre = nombre
@@ -13,6 +16,16 @@ class Maquina:
         self.pila_productos = pila_productos
         self.siguiente = None
 
+    def __str__(self):
+        return f"Nombre: {self.nombre}, Producción: {self.produccion}, Componentes: {self.componentes}, Tiempo: {self.tiempo}"
+
+class Instruccion:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.siguiente = None
+
+    def __str__(self):
+        return f"Instrucción: {self.nombre}"
 
 from abc import ABC, abstractmethod
 
@@ -67,6 +80,14 @@ class PilaProductos(Pila):
             print(f"Nombre: {producto.nombre}")
             print(f"Elaboración: {producto.elaboracion}")
 
+    def getProducto(self, nombre_producto):
+        # Buscar el producto con el nombre dado
+        producto = self.buscar(nombre_producto)
+        if producto is None:
+            return None
+
+        return producto
+
 class PilaMaquinas(Pila):
     def insertar(self, nombre, produccion, componentes, tiempo, pila_productos):
         nuevo_nodo = Maquina(nombre, produccion, componentes, tiempo, pila_productos)
@@ -85,6 +106,14 @@ class PilaMaquinas(Pila):
                 print(f"\tNombre: {producto.nombre}")
                 print(f"\tElaboración: {producto.elaboracion}")
 
+    def getMaquina(self, nombre_maquina):
+        # Buscar la máquina con el nombre dado
+        maquina = self.buscar(nombre_maquina)
+        if maquina is None:
+            return None
+
+        return maquina
+
     def getProductos(self, nombre_maquina):
         # Buscar la máquina con el nombre dado
         maquina = self.buscar(nombre_maquina)
@@ -98,3 +127,22 @@ class PilaMaquinas(Pila):
         lista_productos = nombres_productos.split(",")
 
         return lista_productos
+    
+class PilaInstrucciones(Pila):
+    def insertar(self, instruccion):
+        nuevo_nodo = Instruccion(instruccion)
+        nuevo_nodo.siguiente = self.primero
+        self.primero = nuevo_nodo
+        self.size += 1
+
+    def print(self):
+        for instruccion in self:
+            print(f"Instrucción: {instruccion.instruccion}")
+
+    def getInstruccion(self, instruccion):
+        # Buscar la instrucción con el nombre dado
+        instruccion = self.buscar(instruccion)
+        if instruccion is None:
+            return None
+
+        return instruccion

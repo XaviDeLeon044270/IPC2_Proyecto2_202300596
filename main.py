@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 import os
 import xml.etree.ElementTree as ET
-from clases import PilaMaquinas, PilaProductos
+from clases import PilaMaquinas, PilaProductos, PilaInstrucciones
 
 class MyApp:
     def __init__(self):
@@ -12,6 +12,7 @@ class MyApp:
 
         self.app.route('/')(self.home)
         self.app.route('/archivo', methods=['GET', 'POST'])(self.archivo)
+        self.app.route('/tabla')(self.tabla)
         self.app.route('/info')(self.info)
         self.app.route('/reportes')(self.reportes)
 
@@ -23,26 +24,23 @@ class MyApp:
             # Obtenemos la máquina seleccionada
             maquina_seleccionada = request.form.get('maquina')
 
-            # Buscamos la máquina en la pila de máquinas
-            maquina = self.pila_maquinas.buscar(maquina_seleccionada)
+            # Obtenemos el producto seleccionado
+            producto_seleccionado = request.form.get('producto')
 
-            # Imprimimos los atributos de la máquina
-            if maquina is not None:
-                print("Nombre de la máquina:", maquina.nombre)
-                print("Cantidad de líneas de producción:", maquina.produccion)
-                print("Cantidad de componentes:", maquina.componentes)
-                print("Tiempo de ensamblaje:", maquina.tiempo)
-                print("Productos:", maquina.pila_productos.getNames())
-            else:
-                print("No se encontró la máquina:", maquina_seleccionada)
+            # Almacenamos la máquina seleccionada en la sesión
+            session['maquina_seleccionada'] = maquina_seleccionada
+            # Almacenamos el producto seleccionado en la sesión
+            session['producto_seleccionado'] = producto_seleccionado
+
+            print(f"Producto seleccionado: {producto_seleccionado}")
+
+            # Resto del código...
 
             if 'fileInput' not in request.files:
-                flash("No se encontró el archivo")
                 return redirect(url_for('archivo', maquina_seleccionada=maquina_seleccionada))
 
             file = request.files['fileInput']
             if file.filename == '':
-                flash("No se seleccionó ningún archivo")
                 return redirect(url_for('archivo', maquina_seleccionada=maquina_seleccionada))
             
             if file:
@@ -91,11 +89,43 @@ class MyApp:
             # Pasamos los productos a la plantilla
             return render_template('archivo.html', maquinas=maquinas, productos=productos, maquina_seleccionada=maquina_seleccionada)
 
-    def info(self):
-        return render_template('info.html')
+    def tabla(self):
+        # Obtenemos el producto y la máquina seleccionados de la sesión
+        print("Se entró a la tabla")
+        producto_seleccionado = session.get('producto_seleccionado')
+        maquina_seleccionada = session.get('maquina_seleccionada')
+
+        # Obtenemos los objetos de la máquina y el producto
+        maquina = self.pila_maquinas.getMaquina(maquina_seleccionada)
+
+        if maquina is None:
+            print("No se encontró la máquina seleccionada")
+            return render_template('tabla.html', maquina=None)
+
+        producto = maquina.pila_productos.getProducto(producto_seleccionado)
+
+        if producto is None:
+            print("No se encontró el producto seleccionado")
+            return render_template('tabla.html', maquina=maquina)
+
+        # Imprimimos los atributos de la máquina y el producto seleccionados
+        print(f"Máquina seleccionada: {maquina}")
+        print(f"Producto seleccionado: {producto}")
+
+        # Procesamos las instrucciones de elaboración
+        instrucciones = PilaInstrucciones() 
+        for instruccion in producto.elaboracion.split():
+            instrucciones.insertar(instruccion)
+            print(f"Instrucción: {instruccion}")
+
+        # Pasamos los datos a la plantilla
+        return render_template('tabla.html', maquina=maquina, producto=producto, instrucciones=instrucciones)
 
     def reportes(self):
         return render_template('reportes.html')
+    
+    def info(self):
+        return render_template('info.html')
 
     def run(self):
         self.app.run(host='localhost', debug=True)

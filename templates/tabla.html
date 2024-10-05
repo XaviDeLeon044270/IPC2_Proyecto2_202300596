@@ -5,6 +5,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/engranajes.png') }}" type="image/png">
+    <style>
+        table {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,14 +33,32 @@
             </ul>
         </div>
     </nav>
-    <div class="center-container">
-        <div class="form-container">
-            <h1 style="margin-bottom: 60px;">Digital Intelligence, S. A.</h1>
-            <h1>Máquina Encambladora</h1>
-        </div>
-    </div>
-    <footer>
-        <a href="https://www.flaticon.es/iconos-gratis/engranajes" title="engranajes iconos">Engranajes iconos creados por Freepik - Flaticon</a>
-    </footer>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Tiempo</th>
+                {% if maquina is not none and maquina.produccion is not none %}
+                    {% for i in range(maquina.produccion) %}
+                        <th scope="col">Linea de ensamblaje {{ i + 1 }}</th>
+                    {% endfor %}
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí agregamos la primera fila -->
+            <tr>
+                <td>Segundo 1</td>
+                {% if maquina is not none and maquina.produccion is not none %}
+                    {% for i in range(maquina.produccion) %}
+                        <td>Mover brazo - componente 1</td>
+                    {% endfor %}
+                {% endif %}
+            </tr>
+            <!-- Aquí puedes agregar más filas si lo necesitas -->
+        </tbody>
+    </table>
+
 </body>
 </html>
