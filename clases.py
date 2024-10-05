@@ -20,8 +20,9 @@ class Maquina:
         return f"Nombre: {self.nombre}, Producción: {self.produccion}, Componentes: {self.componentes}, Tiempo: {self.tiempo}"
 
 class Instruccion:
-    def __init__(self, nombre):
-        self.nombre = nombre
+    def __init__(self, linea, componente):
+        self.linea = linea
+        self.componente = componente
         self.siguiente = None
 
     def __str__(self):
@@ -129,8 +130,8 @@ class PilaMaquinas(Pila):
         return lista_productos
     
 class PilaInstrucciones(Pila):
-    def insertar(self, instruccion):
-        nuevo_nodo = Instruccion(instruccion)
+    def insertar(self, linea, componente):
+        nuevo_nodo = Instruccion(linea, componente)
         nuevo_nodo.siguiente = self.primero
         self.primero = nuevo_nodo
         self.size += 1

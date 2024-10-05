@@ -10,6 +10,11 @@
             margin-top: 20px;
             background-color: rgba(255, 255, 255, 0.5);
         }
+        p {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
     </style>
 
 </head>
@@ -56,9 +61,46 @@
                     {% endfor %}
                 {% endif %}
             </tr>
-            <!-- Aquí puedes agregar más filas si lo necesitas -->
+            <!-- Aquí agregamos las filas de los segundos siguientes -->
+            {% if maquina is not none and maquina.produccion is not none %}
+                {% set tiempo_total = [1] %}
+                {% set componentes_actuales = [1] * maquina.produccion %}
+                {% for instruccion in instrucciones|reverse %}
+                    {% for _ in range(abs(componentes_actuales[instruccion.linea - 1] - instruccion.componente)) %}
+                        {% set _ = tiempo_total.append(tiempo_total[-1] + 1) %}
+                        {% set _ = componentes_actuales.__setitem__(instruccion.linea - 1, componentes_actuales[instruccion.linea - 1] + (1 if componentes_actuales[instruccion.linea - 1] < instruccion.componente else -1)) %}
+                        <tr>
+                            <td>Segundo {{ tiempo_total[-1] }}</td>
+                            {% for i in range(maquina.produccion) %}
+                                {% if i + 1 == instruccion.linea %}
+                                    <td>Mover brazo - componente {{ componentes_actuales[i] }}</td>
+                                {% else %}
+                                    <td>No hace nada</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    {% for j in range(maquina.tiempo) %}
+                        {% set _ = tiempo_total.append(tiempo_total[-1] + 1) %}
+                        <tr>
+                            <td>Segundo {{ tiempo_total[-1] }}</td>
+                            {% for i in range(maquina.produccion) %}
+                                {% if i + 1 == instruccion.linea %}
+                                    <td>Ensamblando</td>
+                                {% else %}
+                                    <td>No hace nada</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
+
+    {% if maquina is not none and maquina.produccion is not none %}
+        <p>El producto {{ producto.nombre }} se puede elaborar óptimamente en {{ tiempo_total[-1] }} segundos.</p>
+    {% endif %}
 
 </body>
 </html>
